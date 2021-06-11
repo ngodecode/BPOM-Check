@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:keepScreenOn="true"
+    tools:context=".MainActivity">
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ads_unit_banner"
+        android:layout_margin="10dp">
+    </com.google.android.gms.ads.AdView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColor="#000"
+        android:text="Masukan nomor BPOM\natau Scan Kode QR menggunakan kamera"
+        android:layout_margin="8dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <ImageButton
+            android:id="@+id/btnScan"
+            android:layout_width="60dp"
+            android:layout_height="52dp"
+            android:layout_alignParentRight="true"
+            android:padding="0dp"
+            android:background="#DCDCDC"
+            android:src="@drawable/ic_baseline_camera_alt_24"/>
+
+        <EditText
+            android:id="@+id/edtBPOMID"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:layout_toLeftOf="@+id/btnScan"
+            android:hint="NOMOR BPOM ID"
+            android:textSize="18sp"
+            android:layout_marginRight="8dp"
+            android:background="#DCDCDC"/>
+    </RelativeLayout>
+
+
+
+    <Button
+        android:id="@+id/btnCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CEK INFORMASI"
+        android:textSize="18sp"
+        android:textColor="@color/btn_primary"
+        android:background="@drawable/btn_primary"
+        android:layout_margin="8dp"/>
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
