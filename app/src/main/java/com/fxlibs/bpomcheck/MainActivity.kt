@@ -1,6 +1,5 @@
 package com.fxlibs.bpomcheck
 
-import android.R.attr
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -17,36 +16,79 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.fxlibs.bpomcheck.databinding.ActivityMainBinding
+import com.fxlibs.countdown.CountDownDialog
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.google.zxing.integration.android.IntentIntegrator
 import com.journeyapps.barcodescanner.CaptureActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var viewModel: MainViewModel
     lateinit var dialog : Dialog
+    lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.resultData.observe(this, Observer {
+        viewModel.resultData.observe(this, Observer {result ->
             dialog.dismiss()
-            when (it.status) {
+            when (result.status) {
                 MainViewModel.Status.SUCCESS -> {
-                    it.plainHtml?.let { html ->
-                        showRewardAds()
-                        webView.loadData(html, "text/html", "UTF-8")
+                    result.plainHtml?.let { html ->
+                        val timerDialog = CountDownDialog(
+                            context = this,
+                            title = "Memuat informasi",
+                            description = "Anda dapat mempercepat waktu dengan menonton iklan",
+                            textAction = "LIHAT IKLAN",
+                            onAction = {
+                                rewardedAd?.show(this){}
+                            },
+                            onTimeout = {
+                                binding.webView.loadData(html, "text/html", "UTF-8")
+                            }
+                        )
+                        timerDialog.setActionEnable(false)
+                        timerDialog.show()
+                        loadRewardAds(
+                            onLoaded = {
+                                timerDialog.setActionEnable(true)
+                                rewardedAd?.fullScreenContentCallback = object :
+                                    FullScreenContentCallback() {
+                                    /** Called when the ad failed to show full screen content.  */
+                                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                        timerDialog.dismiss()
+                                        binding.webView.loadData(html, "text/html", "UTF-8")
+                                    }
+
+                                    /** Called when ad showed the full screen content.  */
+                                    override fun onAdShowedFullScreenContent() {
+                                    }
+
+                                    /** Called when full screen content is dismissed.  */
+                                    override fun onAdDismissedFullScreenContent() {
+                                        timerDialog.dismiss()
+                                        binding.webView.loadData(html, "text/html", "UTF-8")
+                                    }
+                                }
+                            },
+                            onFailed = {
+                                timerDialog.dismiss()
+                                binding.webView.loadData(html, "text/html", "UTF-8")
+                            }
+                        )
                     }
+
                 }
                 MainViewModel.Status.ERROR_NOT_FOUND -> {
                     val html = "<p>Maaf sitem kami tidak berhasil menemukan informasi!, Silahkan cek melalui situs berikut ini </br><a href='https://cekbpom.pom.go.id/'><b>cekbpom.pom.go.id</b> </a></>"
-                    webView.loadData(html, "text/html", "UTF-8")
+                    binding.webView.loadData(html, "text/html", "UTF-8")
                 }
                 MainViewModel.Status.ERROR_DATA -> {
                     Toast.makeText(this, "Gagal Memuat Data, Coba lagi nanti", Toast.LENGTH_SHORT)
@@ -62,9 +104,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        btnCheck.setOnClickListener {
-            webView.loadData("<html></html>", "text/html", "UTF-8")
-            edtBPOMID.text.toString().let {
+        binding.btnCheck.setOnClickListener {
+            binding.webView.loadData("<html></html>", "text/html", "UTF-8")
+            binding.edtBPOMID.text.toString().let {
                 if (it.isBlank()) {
                     Toast.makeText(this, "Mohon ini nomor BPOM dengan benar", Toast.LENGTH_SHORT).show()
                 }
@@ -72,13 +114,13 @@ class MainActivity : AppCompatActivity() {
                     dialog = setProgressDialog(this, "Menyiapkan data").apply {
                         show()
                     }
-                    viewModel.getInfo(edtBPOMID.text.toString())
+                    viewModel.getInfo(binding.edtBPOMID.text.toString())
                 }
             }
 
         }
 
-        btnScan.setOnClickListener {
+        binding.btnScan.setOnClickListener {
             val scanIntegrator = IntentIntegrator(this)
             scanIntegrator.setPrompt("Scan Kode QR")
             scanIntegrator.setBeepEnabled(true)
@@ -90,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         MobileAds.initialize(this)
-        adView.loadAd(AdRequest.Builder().build())
+        binding.adView.loadAd(AdRequest.Builder().build())
         showDialogTerm()
     }
 
@@ -158,9 +200,9 @@ class MainActivity : AppCompatActivity() {
                 val idx  = scanContent.indexOf("(91)")
                 val kode = scanContent.substring(4, idx).toUpperCase()
 
-                webView.loadData("<html></html>", "text/html", "UTF-8")
-                edtBPOMID.setText(stripFirstAlpha(kode))
-                btnCheck.callOnClick()
+                binding.webView.loadData("<html></html>", "text/html", "UTF-8")
+                binding.edtBPOMID.setText(stripFirstAlpha(kode))
+                binding.btnCheck.callOnClick()
 
             }
         }
@@ -180,31 +222,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     var rewardedAd: RewardedInterstitialAd? = null
-    private fun showRewardAds() {
+    private fun loadRewardAds(onLoaded:(ad:RewardedInterstitialAd) -> Unit, onFailed:() -> Unit) {
         RewardedInterstitialAd.load(this@MainActivity,
             resources.getString(R.string.ads_unit_reward),
             AdRequest.Builder().build(),
             object : RewardedInterstitialAdLoadCallback() {
                 override fun onAdLoaded(ad: RewardedInterstitialAd) {
                     rewardedAd = ad
-                    rewardedAd?.fullScreenContentCallback = object :
-                        FullScreenContentCallback() {
-                        /** Called when the ad failed to show full screen content.  */
-                        override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                        }
-
-                        /** Called when ad showed the full screen content.  */
-                        override fun onAdShowedFullScreenContent() {
-                        }
-
-                        /** Called when full screen content is dismissed.  */
-                        override fun onAdDismissedFullScreenContent() {
-                        }
-                    }
-                    rewardedAd?.show(this@MainActivity) { }
+                    onLoaded(ad)
                 }
 
                 override fun onAdFailedToLoad(loadAdError: LoadAdError?) {
+                    onFailed()
                 }
             })
     }

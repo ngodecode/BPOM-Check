@@ -4,10 +4,10 @@
     <string name="ads_app_id">ca-app-pub-3007919778406514~3772170305</string>
 
     <!--Test Ads-->
-<!--    <string name="ads_unit_banner">ca-app-pub-3940256099942544/6300978111</string>-->
-<!--    <string name="ads_unit_reward">ca-app-pub-3940256099942544/5354046379</string>-->
+    <string name="ads_unit_banner">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ads_unit_reward">ca-app-pub-3940256099942544/5354046379</string>
 
     <!--Release Ads-->
-    <string name="ads_unit_banner">ca-app-pub-3007919778406514/6178841795</string>
-    <string name="ads_unit_reward">ca-app-pub-3007919778406514/5823618571</string>
+<!--    <string name="ads_unit_banner">ca-app-pub-3007919778406514/6178841795</string>-->
+<!--    <string name="ads_unit_reward">ca-app-pub-3007919778406514/5823618571</string>-->
 </resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="40dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/circularProgressIndicator"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:indeterminate="true"
+        android:indeterminateTint="#9A9A9A"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+    <TextView
+        android:id="@+id/txtProgress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="0"
+        android:gravity="center"
+        android:textSize="100dp"
+        android:textColor="#5A5A5A"
+        app:layout_constraintBottom_toBottomOf="@+id/circularProgressIndicator"
+        app:layout_constraintLeft_toLeftOf="@+id/circularProgressIndicator"
+        app:layout_constraintRight_toRightOf="@+id/circularProgressIndicator"
+        app:layout_constraintTop_toTopOf="@+id/circularProgressIndicator" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/circularProgressIndicator" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="#0286EF"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:layout_marginBottom="40dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
