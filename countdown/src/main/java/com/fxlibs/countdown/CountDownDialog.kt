@@ -40,6 +40,9 @@ class CountDownDialog(
                 alertDialog.dismiss()
             }
         }
+        alertDialog.setOnDismissListener {
+            timer.cancel()
+        }
     }
 
     fun setActionEnable(enable:Boolean) {
